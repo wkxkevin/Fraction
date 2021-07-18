@@ -78,24 +78,30 @@ public class Factorization {
     }
 
     //returns a deep copy of this class
-    public Factorization deepCopy() {
+    public static Factorization deepCopy(Factorization fact) {
         Factorization copy = new Factorization();
-        copy.num = num;
-        for(Pair p : factorization) {
+        copy.num = fact.num;
+        for(Pair p : fact.factorization) {
             copy.factorization.add(p.deepCopy());
         }
         return copy;
     }
 
     //adds a number to the current factorization
-    public Factorization add(int num) {
-        this.num += num;
-        factorization = findFacorization(this.num);
-        return this;
+    public static Factorization add(int first, int second) {
+        return new Factorization(first + second);
     }
 
-    public Factorization add(Factorization second) {
-        return add(second.num);
+    public static Factorization add(Factorization first, Factorization second) {
+        return new Factorization(first.num+second.num);
+    }
+
+    public static Factorization add(Factorization first, int second) {
+        return new Factorization(first.num + second);
+    }
+
+    public static Factorization add(int first, Factorization second) {
+        return new Factorization(first + second.num);
     }
 
     //get the index of one of the factors
@@ -109,21 +115,18 @@ public class Factorization {
     }
 
     //multiplies the current factorization by another
-    public Factorization times(Factorization second) {
+    public static Factorization times(Factorization first, Factorization second) {
+        Factorization newFact = deepCopy(first);
         for(Pair p : second.factorization) {
             int idx = getIndex(p.base);
             if(idx == -1) {
-                factorization.add(p);
+                newFact.factorization.add(p);
             } else {
-                factorization.get(idx).exp += p.exp;
+                newFact.factorization.get(idx).exp += p.exp;
             }
         }
 
-        return this;
-    }
-
-    public Factorization times(int num) {
-        return times(new Factorization(num));
+        return newFact;
     }
 
     //obtains the GCD of a matrix
@@ -139,7 +142,7 @@ public class Factorization {
     }
 
     //multiplies the current factorization by another
-    public Factorization divide(Factorization second) {
+    public Factorization divide(Factorization first, Factorization second) {
         for(Pair p : second.factorization) {
             int idx = getIndex(p.base);
             if(idx == -1) {
@@ -150,9 +153,5 @@ public class Factorization {
         }
 
         return this;
-    }
-
-    public Factorization divide(int num) {
-        return divide(new Factorization(num));
     }
 }

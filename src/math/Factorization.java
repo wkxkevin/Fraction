@@ -24,7 +24,7 @@ public class Factorization {
         1087, 1091, 1093, 1097, 1103, 1109, 1117, 1123, 1129, 1151,
         1153, 1163, 1171, 1181, 1187, 1193, 1201, 1213, 1217, 1223};
 
-    public static class Pair {
+    public class Pair {
         int base;
         int exp;
 
@@ -47,11 +47,12 @@ public class Factorization {
         }
     }
 
-    int num;
-    ArrayList<Pair> factorization;
+    public int num;
+    public ArrayList<Pair> factorization;
 
     public Factorization() {
         num = 1;
+        factorization = new ArrayList<Pair>();
     }
 
     public Factorization(int num) {
@@ -121,12 +122,37 @@ public class Factorization {
         return this;
     }
 
-    //obtains the GCD of a matrix
-    public Factorization GCD(Factorization second) {
-        
-    }
-
     public Factorization times(int num) {
         return times(new Factorization(num));
+    }
+
+    //obtains the GCD of a matrix
+    public Factorization GCD(Factorization second) {
+        Factorization divisor = new Factorization();
+        for(Pair p : factorization) {
+            int idx = second.getIndex(p.base);
+            if(idx != -1) {
+                divisor.factorization.add(new Pair(second.factorization.get(idx).base, Math.min(second.factorization.get(idx).exp, p.exp)));
+            }
+        }
+        return divisor;
+    }
+
+    //multiplies the current factorization by another
+    public Factorization divide(Factorization second) {
+        for(Pair p : second.factorization) {
+            int idx = getIndex(p.base);
+            if(idx == -1) {
+                factorization.add(p);
+            } else {
+                factorization.get(idx).exp -= p.exp;
+            }
+        }
+
+        return this;
+    }
+
+    public Factorization divide(int num) {
+        return divide(new Factorization(num));
     }
 }
